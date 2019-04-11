@@ -1068,10 +1068,26 @@ void update_screens()
 
       break;
     case 9://show the bands of the graphic EQ
-      tft.setTextSize(5);
-      tft.setTextColor(HX8357_BLACK);
-      tft.println("Graphic EQ Bands");
-      break;
+        tft.setTextSize(5);
+        tft.setCursor(45, 45);
+        tft.setTextColor(HX8357_BLACK);
+        tft.println("Graphic EQ");
+        tft.setTextSize(2);
+      if(currently_selected_output==1){
+        //OUTPUT STUFF ABOUT THE MAIN OUTPUT
+        tft.setCursor(45, 130);
+        tft.println("Here's where you'd see some stuff");
+        tft.setCursor(45, 145);
+        tft.println("about the main output");
+      }else if(currently_selected_output == 2){
+        //OUTPUT STUFF ABOUT THE AUX OUTPUT
+        tft.setCursor(45, 130);
+        tft.println("Here's where you'd see some stuff");
+        tft.setCursor(45, 145);
+        tft.println("about the aux output");
+      }else{
+        //YOU DID IT WRONG
+      }
     case 10://show the input 1 compression options
       tft.setTextSize(5);
       tft.setTextColor(HX8357_BLACK);
