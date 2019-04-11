@@ -248,8 +248,7 @@ void setup()
  
   Channel_1_display.clearDisplay();
   Channel_2_display.clearDisplay();
-  Channel_3_display.clearDisplay();
-  Channel_4_display.clearDisplay();
+  Channel_3_and_4_display.clearDisplay();
   Output_display.clearDisplay();
  
   
