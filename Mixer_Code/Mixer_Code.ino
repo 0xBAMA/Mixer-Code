@@ -731,23 +731,23 @@ long apply_filter(long inp, long &x1, long &x2, long &y1, long &y2, double c0, d
 void poll_controls()
 {//check the values from all the UI controls and update their values
   
-  Channel1Fader = analogRead(14);
-  Channel2Fader = analogRead(15);
-  Channel3Fader = analogRead(16);
-  Channel4Fader = analogRead(17);
-  mainOutFader = analogRead(18);
-  auxOutFader = analogRead(19);
-  Channel1AuxLevel = analogRead(20);
-  Channel2AuxLevel = analogRead(21);
-  Channel3AuxLevel = analogRead(22);
-  Channel4AuxLevel = analogRead(23);
-  HeadphoneVolumeControl = analogRead(49);
-  Channel1MuteButton  = digitalRead(29);
-  Channel2MuteButton  = digitalRead(30);
-  Channel3MuteButton  = digitalRead(31);
-  Channel4MuteButton  = digitalRead(24);
-  mainMixMuteButton   = digitalRead(27);
-  auxMixMuteButton    = digitalRead(28);
+  Channel1Fader = analogRead(18);
+  Channel2Fader = analogRead(19);
+  Channel3Fader = analogRead(20);
+  Channel4Fader = analogRead(21);
+  mainOutFader = analogRead(22);
+  auxOutFader = analogRead(23);
+  Channel1AuxLevel = analogRead(14);
+  Channel2AuxLevel = analogRead(15);
+  Channel3AuxLevel = analogRead(16);
+  Channel4AuxLevel = analogRead(17);
+  HeadphoneVolumeControl = analogRead(39);
+  Channel1MuteButton  = digitalRead(1);
+  Channel2MuteButton  = digitalRead(2);
+  Channel3MuteButton  = digitalRead(3);
+  Channel4MuteButton  = digitalRead(4);
+  mainMixMuteButton   = digitalRead(5);
+  auxMixMuteButton    = digitalRead(6);
   
 
   //if(abs(val=knob.read())) - if the read returns a nonzero value, this if statement will evaluate to true.
