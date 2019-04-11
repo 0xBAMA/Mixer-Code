@@ -87,6 +87,57 @@ int currently_selected_output;
 
 //filter coefficients
 
+double input1_band1_coef[5];
+double input1_band2_coef[5];
+double input1_band3_coef[5];
+
+long input1_band1_prev[4] = {0, 0, 0, 0};
+long input1_band2_prev[4] = {0, 0, 0, 0};
+long input1_band3_prev[4] = {0, 0, 0, 0};
+
+double input2_band1_coef[5];
+double input2_band2_coef[5];
+double input2_band3_coef[5];
+
+long input2_band1_prev[4] = {0, 0, 0, 0};
+long input2_band2_prev[4] = {0, 0, 0, 0};
+long input2_band3_prev[4] = {0, 0, 0, 0};
+
+double input3_band1_coef[5];
+double input3_band2_coef[5];
+double input3_band3_coef[5];
+
+long input3_band1_prev[4] = {0, 0, 0, 0};
+long input3_band2_prev[4] = {0, 0, 0, 0};
+long input3_band3_prev[4] = {0, 0, 0, 0};
+
+double input4_band1_coef[5];
+double input4_band2_coef[5];
+double input4_band3_coef[5];
+
+long input4_band1_prev[4] = {0, 0, 0, 0};
+long input4_band2_prev[4] = {0, 0, 0, 0};
+long input4_band3_prev[4] = {0, 0, 0, 0};
+
+double mix1_coef[5];
+double mix2_coef[5];
+
+double output1_band1_coef[5];
+double output1_band2_coef[5];
+double output1_band3_coef[5];
+
+long output1_band1_prev[4] = {0, 0, 0, 0};
+long output1_band2_prev[4] = {0, 0, 0, 0};
+long output1_band3_prev[4] = {0, 0, 0, 0};
+
+double output2_band1_coef[5];
+double output2_band2_coef[5];
+double output2_band3_coef[5];
+
+long output2_band1_prev[4] = {0, 0, 0, 0};
+long output2_band2_prev[4] = {0, 0, 0, 0};
+long output2_band3_prev[4] = {0, 0, 0, 0};
+
 //Parametric
 double channel_1_band_1_corner_freq;
 double channel_2_band_1_corner_freq;
@@ -135,15 +186,15 @@ double aux_mix_high_band_gain;
 
 
 //set up encoders
-Encoder knob1(9, 10);
-Encoder knob2(25, 26);
-Encoder knob3(54, 55);
+Encoder knob1(24,25);
+Encoder knob2(26,27);
+Encoder knob3(28,29);
 
 //set up bounce library for the 4 menu buttons
-Bounce backbutton = Bounce(33, 10); 
-Bounce nextbutton = Bounce(34, 10); 
-Bounce prevbutton = Bounce(35, 10); 
-Bounce entrbutton = Bounce(36, 10);
+Bounce backbutton = Bounce(0, 10); 
+Bounce nextbutton = Bounce(33, 10); 
+Bounce prevbutton = Bounce(34, 10); 
+Bounce entrbutton = Bounce(35, 10);
 
 
 
@@ -161,13 +212,13 @@ Adafruit_HX8357 tft = Adafruit_HX8357(TFT_CS, TFT_DC, MOSI, SCK, TFT_RST, MISO);
 
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
-#define OLED_RESET     -1
+#define OLED_RESET   -1
 
 Adafruit_SSD1306 Channel_1_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 Adafruit_SSD1306 Channel_2_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-Adafruit_SSD1306 Channel_3_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, OLED_RESET);
-Adafruit_SSD1306 Channel_4_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, OLED_RESET);
-Adafruit_SSD1306 Output_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire2, OLED_RESET);
+Adafruit_SSD1306 Channel_3_and_4_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, OLED_RESET);
+Adafruit_SSD1306 Output_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, OLED_RESET);
+
 
 Adafruit_TPA2016 main_and_aux_mix_amp = Adafruit_TPA2016();
 Adafruit_TPA2016 headphone_amp = Adafruit_TPA2016();
@@ -192,9 +243,8 @@ void setup()
   //Initialize screens
   Channel_1_display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   Channel_2_display.begin(SSD1306_SWITCHCAPVCC, 0x3D);
-  Channel_3_display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  Channel_4_display.begin(SSD1306_SWITCHCAPVCC, 0x3D);
-  Output_display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  Channel_3_and_4_display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  Output_display.begin(SSD1306_SWITCHCAPVCC, 0x3D);
  
   Channel_1_display.clearDisplay();
   Channel_2_display.clearDisplay();
@@ -251,6 +301,19 @@ void setup()
   //poll initial values of all controls
   poll_controls();
 
+  //initalize DAC
+ setPin(A21, OUTPUT);
+ setPin(A22, OUTPUT);
+ /*
+  analogWriteFrequency(A21,4000000);
+  analogWriteFrequency(A22,4000000);
+  analogWriteResolution(16);
+*/
+  //initiallize ADC
+  analogReadResolution(16);
+  setPin(A12, INPUT);
+  setPin(A13, INPUT);
+ 
   //initialize filters with zero values
   //look at the MATLAB code for the eq
 
@@ -267,41 +330,91 @@ void setup()
 }
 
 //these hold the values read from the ADCs
-volatile uint16_t current_sample1;
-volatile uint16_t current_sample2;
-volatile uint16_t current_sample3;
-volatile uint16_t current_sample4;
+// volatile uint16_t current_sample1;
+// volatile uint16_t current_sample2;
+// volatile uint16_t current_sample3;
+// volatile uint16_t current_sample4;
+
+//to be manipulated, values need to be centered at 0, so need to be longs
+volatile long current_sample1_sc;
+volatile long current_sample2_sc;
+volatile long current_sample3_sc;
+volatile long current_sample4_sc;
+
+//temp variables to hold values after each stage
+long input1_band1_output;
+long input1_band2_output;
+long input1_band3_output;
+
+long input2_band1_output;
+long input2_band2_output;
+long input2_band3_output;
+
+long mix1_output;
+long mix2_output;
+
+long output1_band1_output;
+long output1_band2_output;
+long output1_band3_output;
+
+long output2_band1_output;
+long output2_band2_output;
+long output3_band3_output;
+
+uint16_t current_output1_sample;
+uint16_t current_output2_sample;
 
 void sample()
 {//this function is attached to the timed interrupt
-  digitalWrite(33, HIGH);//begin converting
-  delayMicroseconds(1);
-  SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE0));
+//   digitalWrite(33, HIGH);//begin converting
+//   delayMicroseconds(1);
+//   SPI.beginTransaction(SPISettings(spi_speed, MSBFIRST, SPI_MODE0));
  
-  current_sample1 = SPI.transfer16(0);
-  current_sample2 = SPI.transfer16(0);
-  current_sample3 = SPI.transfer16(0);
-  current_sample4 = SPI.transfer16(0);
+//   current_sample1 = SPI.transfer16(0);
+//   current_sample2 = SPI.transfer16(0);
+//   current_sample3 = SPI.transfer16(0);
+//   current_sample4 = SPI.transfer16(0);
  
-  SPI.endTransaction();
-  digitalWrite(33, LOW);//converting finished
+//   SPI.endTransaction();
+//   digitalWrite(33, LOW);//converting finished
+ 
+   current_sample1 = analogRead(A12);
+  current_sample2 = analogRead(A13);
+ 
+  current_sample1_sc = current_sample1_sc - 24823;
+ current_sample2_sc = current_sample2_sc - 24823;
  
   //store these samples
-  channel1_samples[samples_buffer_current_index] = 0;
-  channel2_samples[samples_buffer_current_index] = 0;
-  channel3_samples[samples_buffer_current_index] = 0;
-  channel4_samples[samples_buffer_current_index] = 0;
+//   channel1_samples[samples_buffer_current_index] = 0;
+//   channel2_samples[samples_buffer_current_index] = 0;
+//   channel3_samples[samples_buffer_current_index] = 0;
+//   channel4_samples[samples_buffer_current_index] = 0;
  
   //increment the index for the circular buffer, and reset to zero if it is past the bounds
-  samples_buffer_current_index++;
-  if(samples_buffer_current_index == NUM_SAMPLES)
-    samples_buffer_current_index = 0;
- 
- 
-  //How are we doing all these?
+//   samples_buffer_current_index++;
+//   if(samples_buffer_current_index == NUM_SAMPLES)
+//     samples_buffer_current_index = 0;
+
   
   //apply parametric eq for input 1
+  input1_band1_output = apply_filter(current_sample1_sc, input1_band1_prev[0], input1_band1_prev[1], input1_band1_prev[2], input1_band1_prev[3], input1_band1_coef[0], input1_band1_coef[1], input1_band1_coef[2], 
+  input1_band1_coef[3], unput1_band1_coef[4]);
+
+  input1_band2_output = apply_filter(input1_band1_output, input1_band2_prev[0], input1_band2_prev[1], input1_band2_prev[2], input1_band2_prev[3], input1_band2_coef[0], input1_band2_coef[1], input1_band2_coef[2], 
+  input1_band2_coef[3], unput1_band2_coef[4]);
+
+  input1_band3_output = apply_filter(input1_band2_output, input1_band3_prev[0], input1_band3_prev[1], input1_band3_prev[2], input1_band3_prev[3], input1_band3_coef[0], input1_band3_coef[1], input1_band3_coef[2], 
+  input1_band3_coef[3], unput1_band3_coef[4]);
   //apply parametric eq for input 2
+  input2_band1_output = apply_filter(current_sample2_sc, input2_band1_prev[0], input2_band1_prev[1], input2_band1_prev[2], input2_band1_prev[3], input2_band1_coef[0], input2_band1_coef[1], input2_band1_coef[2], 
+  input2_band1_coef[3], unput2_band1_coef[4]);
+
+  input2_band2_output = apply_filter(input2_band1_output, input2_band2_prev[0], input2_band2_prev[1], input2_band2_prev[2], input2_band2_prev[3], input2_band2_coef[0], input2_band2_coef[1], input2_band2_coef[2], 
+  input2_band2_coef[3], unput2_band2_coef[4]);
+
+  input2_band3_output = apply_filter(input2_band2_output, input2_band3_prev[0], input2_band3_prev[1], input2_band3_prev[2], input2_band3_prev[3], input2_band3_coef[0], input2_band3_coef[1], input2_band3_coef[2], 
+  input2_band3_coef[3], unput2_band3_coef[4]);
+  
   //apply parametric eq for input 3
   //apply parametric eq for input 4
   
@@ -311,11 +424,29 @@ void sample()
   //apply compression for input 4
   
   //do the mixing operation for main mix
+  mix1_output = mix1_coef[4] * ( (input1_band3_output * mix1_coef[0]) + (input2_band3_output * mix1_coef[1]) + (input3_band3_output * mix1_coef[2]) + (input4_band3_output * mix1_coef[3]));
   //do the mixing operation for aux mix
+   mix2_output = mix2_coef[4] * ( (input1_band3_output * mix2_coef[0]) + (input2_band3_output * mix2_coef[1]) + (input3_band3_output * mix2_coef[2]) + (input4_band3_output * mix2_coef[3]));
   
   //apply graphic eq to main mix
+  output1_band1_output = apply_filter(mix1_output, output1_band1_prev[0], output1_band1_prev[1], output1_band1_prev[2], output1_band1_prev[3], output1_band1_coef[0], output1_band1_coef[1], output1_band1_coef[2], 
+  output1_band1_coef[3], output1_band1_coef[4]);
+
+ output1_band2_output = apply_filter(output1_band1_output, output1_band2_prev[0], output1_band2_prev[1], output1_band2_prev[2], output1_band2_prev[3], output1_band2_coef[0], output1_band2_coef[1], output1_band2_coef[2], 
+  output1_band2_coef[3], output1_band2_coef[4]);
+
+  output1_band3_output = apply_filter(output1_band2_output, output1_band3_prev[0], output1_band3_prev[1], output1_band3_prev[2], output1_band3_prev[3], output1_band3_coef[0], output1_band3_coef[1], output1_band3_coef[2], 
+  output1_band3_coef[3], output1_band3_coef[4]);
+
   //apply graphic eq to aux mix
-  
+  output2_band1_output = apply_filter(mix2_output, output2_band1_prev[0], output2_band1_prev[1], output2_band1_prev[2], output2_band1_prev[3], output2_band1_coef[0], output2_band1_coef[1], output2_band1_coef[2], 
+  output2_band1_coef[3], output2_band1_coef[4]);
+
+ output2_band2_output = apply_filter(output2_band1_output, output2_band2_prev[0], output2_band2_prev[1], output2_band2_prev[2], output2_band2_prev[3], output2_band2_coef[0], output2_band2_coef[1], output2_band2_coef[2], 
+  output2_band2_coef[3], output2_band2_coef[4]);
+
+  output2_band3_output = apply_filter(output2_band2_output, output2_band3_prev[0], output2_band3_prev[1], output2_band3_prev[2], output2_band3_prev[3], output2_band3_coef[0], output2_band3_coef[1], output2_band3_coef[2], 
+  output2_band3_coef[3], output2_band3_coef[4]);
   //apply compression to main mix
   //apply compression to aux mix
  
@@ -342,6 +473,11 @@ void sample()
    default:
     break;//i.e. ==0, listening to nothing
    }
+ 
+  current_output1_sample = output_band3_output + 24823;
+  current_output1_sample = output_band3_output + 24823;
+  analogWrite(A21, current_output1_sample);
+  analogWrite(A22, current_output2_sample);
  
   //OUTPUT THE MAIN AND AUX MIXES THROUGH THE DAC PINS
   
@@ -583,12 +719,12 @@ void highshelffiltercalc(double dBgain, double freq, double &c0, double &c1, dou
     c4 = a2 / a0;
 }
 
-uint16_t apply_filter(uint16_t inp, uint16_t &x1, uint16_t &x2, uint16_t &y1, uint16_t &y2, double c0, double c1, double c2, double c3, double c4){
-  uint16_t output1 = (((c0 * ((inp))) + (c1 * ((x1))) + (c2 * ((x2))) - (c3 * ((y1))) - (c4 * ((y2)))));
+long apply_filter(long inp, long &x1, long &x2, long &y1, long &y2, double c0, double c1, double c2, double c3, double c4){
+ long output1 = (((c0 * ((inp))) + (c1 * ((x1))) + (c2 * ((x2))) - (c3 * ((y1))) - (c4 * ((y2)))));
   x2 = (x1);
   x1 = (inp);
   y2 = (y1);
-  y1 = (output1);
+  y_1 = (output1);
   return output1;
 }
 
