@@ -1088,70 +1088,109 @@ void update_screens()
       }else{
         //YOU DID IT WRONG
       }
+     break;
     case 10://show the input 1 compression options
       tft.setTextSize(5);
+      tft.setCursor(45, 45);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Compression Settings - Input 1");
+      tft.println("Compression");
+      tft.setTextSize(2);
+      tft.setCursor(45, 130);
+      tft.println("Here's where you'd see some stuff");
+      tft.setCursor(45, 145);
+      tft.println("to change settings on Input 1");
       break;
     case 11://show the input 2 compression options
       tft.setTextSize(5);
+      tft.setCursor(45, 45);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Compression Settings - Input 2");
+      tft.println("Compression");
+      tft.setTextSize(2);
+      tft.setCursor(45, 130);
+      tft.println("Here's where you'd see some stuff");
+      tft.setCursor(45, 145);
+      tft.println("to change settings on Input 2");
       break;
     case 12://show the input 3 compression options
       tft.setTextSize(5);
+      tft.setCursor(45, 45);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Compression Settings - Input 3");
+      tft.println("Compression");
+      tft.setTextSize(2);
+      tft.setCursor(45, 130);
+      tft.println("Here's where you'd see some stuff");
+      tft.setCursor(45, 145);
+      tft.println("to change settings on Input 3");
       break;
     case 13://show the input 4 compression options
       tft.setTextSize(5);
+      tft.setCursor(45, 45);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Compression Settings - Input 4");
+      tft.println("Compression");
+      tft.setTextSize(2);
+      tft.setCursor(45, 130);
+      tft.println("Here's where you'd see some stuff");
+      tft.setCursor(45, 145);
+      tft.println("to change settings on Input 4");
       break;
     case 14://show the main output compression options
       tft.setTextSize(5);
+      tft.setCursor(45, 45);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Compression Settings - Main Output");
+      tft.println("Compression");
+      tft.setTextSize(2);
+      tft.setCursor(45, 130);
+      tft.println("Here's where you'd see some stuff");
+      tft.setCursor(45, 145);
+      tft.println("to change settings on main output");
       break;
     case 15://show the aux output compression options
       tft.setTextSize(5);
+      tft.setCursor(45, 45);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Compression Settings - Aux Output");
+      tft.println("Compression");
+      tft.setTextSize(2);
+      tft.setCursor(45, 130);
+      tft.println("Here's where you'd see some stuff");
+      tft.setCursor(45, 145);
+      tft.println("to change settings on aux output");
       break;
     case 16://show the option to select input 1 for the headphone monitor
-      tft.setTextSize(5);
+      tft.setTextSize(2);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Input 1");
+      tft.println("Hit Enter to listen to Input 1");
       break;
     case 17://show the option to select input 2 for the headphone monitor
-      tft.setTextSize(5);
+      tft.setTextSize(2);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Input 2");
+      tft.println("Hit Enter to listen to Input 2");
       break;
     case 18://show the option to select input 3 for the headphone monitor
-      tft.setTextSize(5);
+      tft.setTextSize(2);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Input 3");
+      tft.println("Hit Enter to listen to Input 3");
       break;
     case 19://show the option to select input 4 for the headphone monitor
-      tft.setTextSize(5);
+      tft.setTextSize(2);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Input 4");
+      tft.println("Hit Enter to listen to Input 4");
       break;
     case 20://show the option to select main output for the headphone monitor
-      tft.setTextSize(5);
+      tft.setTextSize(2);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Main Output");
+      tft.println("Hit Enter to listen to Main Output");
       break;
     case 21://show the option to select aux output for the headphone monitor
-      tft.setTextSize(5);
+      tft.setTextSize(2);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("Aux Output");
+      tft.println("Hit Enter to listen to Aux Output");
       break;
     case 22://show the option to turn off the headphone monitor
-      tft.setTextSize(5);
+      tft.setTextSize(2);
       tft.setTextColor(HX8357_BLACK);
-      tft.println("None");
+      tft.println("Hit Enter to listen to");
+      tft.setTextSize(5);
+      tft.println("NOTHING");
       break;
     default:
       break;
