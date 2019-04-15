@@ -2,16 +2,21 @@
  *  
  *  
  *  Analog inputs
- *    A0-A3 are Channel 1 to Channel 4 faders
- *    A4-A5 are the Main and Aux mix output faders
- *    A6-A9 are Channel 1 to Channel 4 aux levels
- *    [A10 or pin 49] is headphone volume control - how do you use pin A10?
+ *    18 to 23 are all the faders
+ *    14 to 17 are Channel 1 to Channel 4 aux levels
+ *    39 is headphone volume control
  *    
  *  Digital inputs
- *    29,30,31,24 are the Channel 1 to Channel 4 Mutes (latching buttons) - pin 31 is used, we need to move channel 3 mute
- *    27 and 28 are the Main and Aux Mix Mute buttons  (latching buttons)
- *    9 and 10, 25 and 26, 54 and 55 are pairs for each of the rotary encoders
- *    33-36 are the four menu  buttons (momentary buttons)
+ *    1 to 6 are all the mutes (latching buttons)
+ *    24 to 29 are all the rotary encoders
+ *    0, 33-35 are the four menu  buttons (momentary buttons)
+ *
+ * The two DAC outputs are used for the two mixes
+ * headphone pwm out is on 36
+ *
+ *
+ *  30  is the only pin on the front that is not in use
+ *
  *
  *  Screens
  *    I2C Bus number zero has SCL on pin 7 and SDA on pin 8
