@@ -40,6 +40,9 @@
 int spi_speed = 30000000;
 IntervalTimer ADC_timed_interrupt;
 
+int n; //global variable keeps track of the number of timed interrupts
+//so that you're not polling the analog and digital pins as often
+
 //this integer holds the current state of the menu
 int menustate;
 
@@ -238,7 +241,7 @@ int samples_buffer_current_index;
 void setup() 
 {//initialization and setup of all initial values and initial state
  
- 
+  n = 0;
  
   //Initialize screens
   Channel_1_display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
@@ -299,6 +302,7 @@ void setup()
  
   //poll initial values of all controls
   poll_controls();
+  poll_controls_timed(); //call this once to make sure all the values are initialized
 
   //initalize DAC
  setPin(A21, OUTPUT);
@@ -376,6 +380,12 @@ void sample()
  
 //   SPI.endTransaction();
 //   digitalWrite(33, LOW);//converting finished
+ 
+  n++;
+  if(n == 10000){
+    poll_controls_timed();
+    n=0;
+  }
  
    current_sample1 = analogRead(A12);
   current_sample2 = analogRead(A13);
@@ -728,27 +738,7 @@ long apply_filter(long inp, long &x1, long &x2, long &y1, long &y2, double c0, d
 }
 
 void poll_controls()
-{//check the values from all the UI controls and update their values
-  
-  Channel1Fader = analogRead(18);
-  Channel2Fader = analogRead(19);
-  Channel3Fader = analogRead(20);
-  Channel4Fader = analogRead(21);
-  mainOutFader = analogRead(22);
-  auxOutFader = analogRead(23);
-  Channel1AuxLevel = analogRead(14);
-  Channel2AuxLevel = analogRead(15);
-  Channel3AuxLevel = analogRead(16);
-  Channel4AuxLevel = analogRead(17);
-  HeadphoneVolumeControl = analogRead(39);
-  Channel1MuteButton  = digitalRead(1);
-  Channel2MuteButton  = digitalRead(2);
-  Channel3MuteButton  = digitalRead(3);
-  Channel4MuteButton  = digitalRead(4);
-  mainMixMuteButton   = digitalRead(5);
-  auxMixMuteButton    = digitalRead(6);
-  
-
+{
   //if(abs(val=knob.read())) - if the read returns a nonzero value, this if statement will evaluate to true.
     //positive integers make if evaluate true - the value is significant if it is nonzero, positive or negative, thus, abs()
   if(abs(RotaryEncoder1Val = knob1.read())) encoder1_update(RotaryEncoder1Val);//update the values, based upon the current menustate
@@ -776,6 +766,27 @@ void poll_controls()
       enter_button();
  
 }      
+
+void poll_controls_timed(){
+ //check the values from all the UI controls and update their values
+  Channel1Fader = analogRead(18);
+  Channel2Fader = analogRead(19);
+  Channel3Fader = analogRead(20);
+  Channel4Fader = analogRead(21);
+  mainOutFader = analogRead(22);
+  auxOutFader = analogRead(23);
+  Channel1AuxLevel = analogRead(14);
+  Channel2AuxLevel = analogRead(15);
+  Channel3AuxLevel = analogRead(16);
+  Channel4AuxLevel = analogRead(17);
+  HeadphoneVolumeControl = analogRead(39);
+  Channel1MuteButton  = digitalRead(1);
+  Channel2MuteButton  = digitalRead(2);
+  Channel3MuteButton  = digitalRead(3);
+  Channel4MuteButton  = digitalRead(4);
+  mainMixMuteButton   = digitalRead(5);
+  auxMixMuteButton    = digitalRead(6);
+}
 
 double scale_fader(uint16_t fader_value){
    double temp_fader_val = fader_value / 1023;
