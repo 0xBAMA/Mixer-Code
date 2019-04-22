@@ -468,21 +468,27 @@ void sample()
   switch(currently_selected_headphone_channel){
    case 1:
     //output input 1's value
+    
     break;
    case 2:
     //output input 2's value
+    
     break;
    case 3:
     //output input 3's value
+    
     break;
    case 4:
     //output input 4's value
+    
     break;
    case 5:
     //output main output's value
+    
     break;
    case 6:
     //output aux mix's value
+    
     break;
    default:
     break;//i.e. ==0, listening to nothing
@@ -791,6 +797,9 @@ void poll_controls_timed(){
   Channel4MuteButton  = digitalRead(4);
   mainMixMuteButton   = digitalRead(5);
   auxMixMuteButton    = digitalRead(6);
+ 
+ //use the mix faders and the knob to set aux and main gains, 
+ //then use the tpa2016.setGain(gain) where gain is a number 0-31
 }
 
 double scale_fader(uint16_t fader_value){
@@ -964,6 +973,9 @@ void encoder3_update(int increment)
      
 void update_screens()
 {
+ 
+  //put the code for the small screens here
+ 
   tft.fillScreen(HX8357_WHITE);
   switch(menustate)
   {
