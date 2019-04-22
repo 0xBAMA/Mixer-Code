@@ -224,7 +224,7 @@ Adafruit_HX8357 tft = Adafruit_HX8357(TFT_CS, TFT_DC, MOSI, SCK, TFT_RST, MISO);
 
 Adafruit_SSD1306 Channel_1_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 Adafruit_SSD1306 Channel_2_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-Adafruit_SSD1306 Channel_3_and_4_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, OLED_RESET);
+//Adafruit_SSD1306 Channel_3_and_4_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, OLED_RESET); // these screens are not being used anymore
 Adafruit_SSD1306 Output_display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire1, OLED_RESET);
 
 
